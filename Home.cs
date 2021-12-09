@@ -14,13 +14,13 @@ namespace TicketReservation
         List<Ticket> basket = new List<Ticket>();
         List<Button> ticketButtons = new List<Button>();
         bool isFirstClass = false;
-        
+        bool isInternational = false;
+
         Database db = new Database();
         SQLiteDataAdapter sda = new SQLiteDataAdapter();
         SQLiteCommand cmd = new SQLiteCommand();
 
-
-
+        
         public Home()
         {
             InitializeComponent();
@@ -74,7 +74,7 @@ namespace TicketReservation
             this.ticketButtons.Add(this.seat23);
             this.ticketButtons.Add(this.seat24);
 
-            setButtons(false);
+            setButtons();
         }
 
         private void loadPaths(int isInternational)
@@ -99,7 +99,8 @@ namespace TicketReservation
             {
                 this.cmbTo.Items.Add(dt.Rows[destIndex][0].ToString());
             }
-            
+            db.closeconnection();
+
         }
 
         private void loadFrom(int isInternational)
@@ -114,17 +115,29 @@ namespace TicketReservation
             {
                 this.cmbFrom.Items.Add(dt.Rows[fromIndex][0].ToString());
             }
-            
+            db.closeconnection();
+
         }
 
-        private void setButtons(bool isFirstClass)
+        private void setButtons()
         {
             int index = 1;
             foreach(Button btn in this.ticketButtons) //Later I shoud iterate through the database's seats for this route
             {
                 btn.Click += seatClick;
                 btn.Text = index+"";
-                if (isFirstClass)
+                
+
+                index++;
+            }
+            setButtonColor();
+        }
+
+        private void setButtonColor()
+        {
+            foreach (Button btn in this.ticketButtons) 
+            {
+                if (this.isFirstClass)
                 {
                     btn.BackColor = Color.AliceBlue;
                 }
@@ -132,16 +145,36 @@ namespace TicketReservation
                 {
                     btn.BackColor = Color.Honeydew;
                 }
-                //TODO
-                //Set colors for the seats
-
-                index++;
             }
+
         }
 
-        public void seatClick(object sender, EventArgs e)
+        private void addToBasket()
         {
+            this.lvBasket.Items.Clear();
+            for (int i = 0; i < this.basket.Count; i++)
+            {
+                this.lvBasket.Items.Add(this.basket[i].ToString());
+            }
+
+            this.lvBasket.Refresh();
+            
+        }
+
+        private void seatClick(object sender, EventArgs e)
+        {
+            string[] progresses = new string[] { "Free", "In basket", "Taken" };
+            int price = calcPrice();
+            
             string seatNumber = (sender as Button).Text;
+            int clazz = this.isFirstClass ? 1 : 2;
+            string from = this.cmbFrom.SelectedItem.ToString();
+            string to = this.cmbTo.SelectedItem.ToString();
+
+            this.basket.Add(new Ticket(from, to, clazz, Int32.Parse(seatNumber), progresses[1], price, this.isInternational, getPathId(from, to)));
+            //Ticket(string from, string to, int clazz, int seatNumber, string progress, int price, bool isInternational, int pathId)
+            addToBasket();
+
             //this.basket.Add(new Ticket());
             //TODO
             //If a seat is not taken
@@ -149,6 +182,46 @@ namespace TicketReservation
             //
         }
 
+        private int calcPrice()
+        {
+            int price = 0;
+            if (!this.isInternational)
+            {
+                if (this.isFirstClass)
+                {
+                    price = 2500;
+                }
+                else
+                {
+                    price = 1750;
+                }
+            }
+            else
+            {
+                if (this.isFirstClass)
+                {
+                    price = 10000;
+                }
+                else
+                {
+                    price = 7500;
+                }
+            }
+            return price;
+        }
+
+        private int getPathId(string from, string to)
+        {
+            DataTable dt = new DataTable();
+            db.openconnection();
+            SQLiteCommand cmd = new SQLiteCommand("SELECT Id FROM Path WHERE Leaving_from='"+from+"' AND Destination ='" + to + "'", db.GetConnection());
+            sda = new SQLiteDataAdapter(cmd);
+            sda.Fill(dt);
+            int id = Int32.Parse(dt.Rows[0][0].ToString());
+            db.closeconnection();
+
+            return id;
+        }
 
         private void btnInfoClick(object sender, EventArgs e)
         {
@@ -157,7 +230,7 @@ namespace TicketReservation
 
         private void btnMyTickets_Click(object sender, EventArgs e)
         {
-
+            //OPEN MY TICKETS PAGE
         }
 
         private void btnLogOut_Click(object sender, EventArgs e)
@@ -167,7 +240,7 @@ namespace TicketReservation
 
         private void btnPay_Click(object sender, EventArgs e)
         {
-
+            //OPEN PAYMENT PAGE
         }
 
         private void cmbFrom_SelectedIndexChanged(object sender, EventArgs e)
@@ -180,11 +253,12 @@ namespace TicketReservation
                 "FROM Path " +
                 "WHERE " +
                 "Leaving_from='"+this.cmbFrom.SelectedItem.ToString()+"' " +
-                "AND Is_international='"+ (this.chbInternational.Checked ? "1" : "0") + "'", db.GetConnection());
+                "AND Is_international='"+ (this.isInternational ? "1" : "0") + "'", db.GetConnection());
             sda = new SQLiteDataAdapter(cmd);
             sda.Fill(dt);
 
             this.cmbTo.SelectedItem = dt.Rows[0][0].ToString();
+            db.closeconnection();
             //this.cmbFrom.SelectedIndexChanged += cmbFrom_SelectedIndexChanged;
         }
 
@@ -198,24 +272,26 @@ namespace TicketReservation
                 "FROM Path " +
                 "WHERE " +
                 "Destination='" + this.cmbTo.SelectedItem.ToString() + "' " +
-                "AND Is_international='" + (this.chbInternational.Checked ? "1" : "0") + "'", db.GetConnection());
+                "AND Is_international='" + (this.isInternational ? "1" : "0") + "'", db.GetConnection());
             sda = new SQLiteDataAdapter(cmd);
             sda.Fill(dt);
 
             this.cmbFrom.SelectedItem = dt.Rows[0][0].ToString();
+            db.closeconnection();
         }
 
         private void chbInternational_CheckedChanged(object sender, EventArgs e)
         {
             this.cmbFrom.Items.Clear();
             this.cmbTo.Items.Clear();
+            this.isInternational = this.chbInternational.Checked;
             loadPaths(this.chbInternational.Checked ? 1 : 0);
         }
 
         private void chFirstClass_CheckedChanged(object sender, EventArgs e)
         {
             this.isFirstClass = this.chFirstClass.Checked;
-            setButtons(this.isFirstClass);
+            setButtonColor();
         }
     }
 }

@@ -62,7 +62,7 @@ namespace TicketReservation
             this.seat2 = new System.Windows.Forms.Button();
             this.seat1 = new System.Windows.Forms.Button();
             this.btnPay = new System.Windows.Forms.Button();
-            this.listView1 = new System.Windows.Forms.ListView();
+            this.lvBasket = new System.Windows.Forms.ListView();
             this.label3 = new System.Windows.Forms.Label();
             this.chbInternational = new System.Windows.Forms.CheckBox();
             this.chFirstClass = new System.Windows.Forms.CheckBox();
@@ -391,14 +391,14 @@ namespace TicketReservation
             this.btnPay.UseVisualStyleBackColor = true;
             this.btnPay.Click += new System.EventHandler(this.btnPay_Click);
             // 
-            // listView1
+            // lvBasket
             // 
-            this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(941, 256);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(276, 289);
-            this.listView1.TabIndex = 9;
-            this.listView1.UseCompatibleStateImageBehavior = false;
+            this.lvBasket.HideSelection = false;
+            this.lvBasket.Location = new System.Drawing.Point(941, 256);
+            this.lvBasket.Name = "lvBasket";
+            this.lvBasket.Size = new System.Drawing.Size(276, 289);
+            this.lvBasket.TabIndex = 9;
+            this.lvBasket.UseCompatibleStateImageBehavior = false;
             // 
             // label3
             // 
@@ -440,7 +440,7 @@ namespace TicketReservation
             this.Controls.Add(this.chFirstClass);
             this.Controls.Add(this.chbInternational);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.listView1);
+            this.Controls.Add(this.lvBasket);
             this.Controls.Add(this.btnPay);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.label2);
@@ -493,7 +493,7 @@ namespace TicketReservation
         private System.Windows.Forms.Button seat2;
         private System.Windows.Forms.Button seat1;
         private System.Windows.Forms.Button btnPay;
-        private System.Windows.Forms.ListView listView1;
+        private System.Windows.Forms.ListView lvBasket;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.CheckBox chbInternational;
         private System.Windows.Forms.CheckBox chFirstClass;
