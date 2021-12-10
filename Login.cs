@@ -78,7 +78,8 @@ namespace TicketReservation
             if (dt.Rows[0][0].ToString() == "1")
             {
                 this.Hide();
-                new Home().Show();
+                string userName = this.tbUsername.Text;
+                new Home(userName).Show();
             }
             else
             {

@@ -9,20 +9,21 @@ using System.Windows.Forms;
 
 namespace TicketReservation
 {
-    public partial class Home : Form
+    partial class Home : Form
     {
         List<Ticket> basket = new List<Ticket>();
         List<Ticket> takenTickets = new List<Ticket>();
         List<Button> ticketButtons = new List<Button>();
         bool isFirstClass = false;
         bool isInternational = false;
+        private string userName = "";
 
         Database db = new Database();
         SQLiteDataAdapter sda = new SQLiteDataAdapter();
         SQLiteCommand cmd = new SQLiteCommand();
 
         
-        public Home()
+        public Home(string userName)
         {
             InitializeComponent();
             this.FormClosed += new FormClosedEventHandler(formClosed);
@@ -31,6 +32,13 @@ namespace TicketReservation
             initDropDowns();
             loadSopsVisible(false);
             initDataGridView();
+            initUser(userName);
+            setButtonActive();
+        }
+
+        private void initUser(string userName)
+        {
+            this.userName = userName;
         }
 
         private void initDataGridView()
@@ -94,10 +102,10 @@ namespace TicketReservation
         {
             DataTable dt = new DataTable();
             db.openconnection();
-            SQLiteCommand cmd = new SQLiteCommand("SELECT * FROM Ticket", db.GetConnection());
+            SQLiteCommand cmd = new SQLiteCommand("SELECT * FROM Ticket, Path WHERE Ticket.Path_Id = Path.Id", db.GetConnection());
             sda = new SQLiteDataAdapter(cmd);
             sda.Fill(dt);
-
+            
             for (int fromIndex = 0; fromIndex < dt.Rows.Count; fromIndex++)
             {
                 int id = Int32.Parse(dt.Rows[fromIndex][0].ToString());
@@ -105,12 +113,16 @@ namespace TicketReservation
                 int seatNumber = Int32.Parse(dt.Rows[fromIndex][2].ToString());
                 string progress = dt.Rows[fromIndex][3].ToString();
                 int price = Int32.Parse(dt.Rows[fromIndex][4].ToString());
-                bool isInternational = Int32.Parse(dt.Rows[fromIndex][4].ToString())==1 ? true : false;
-                int pathId = Int32.Parse(dt.Rows[fromIndex][5].ToString());
+                bool isInter = (Int32.Parse(dt.Rows[fromIndex][5].ToString()) == 1)? true : false;
+                int pathId = Int32.Parse(dt.Rows[fromIndex][6].ToString());
 
-                this.takenTickets.Add(new Ticket(id, clazz, seatNumber, progress, price, isInternational, pathId));
+                string from = dt.Rows[fromIndex][10].ToString();
+                string to = dt.Rows[fromIndex][11].ToString();
+
+                this.takenTickets.Add(new Ticket(id, from, to, clazz, seatNumber, progress, price, isInter, pathId));
             }
             db.closeconnection();
+            
         }
 
         private void initDropDowns()
@@ -202,6 +214,7 @@ namespace TicketReservation
                 index++;
             }
             setButtonColor();
+            
         }
 
         private void setButtonActive()
@@ -211,15 +224,17 @@ namespace TicketReservation
             {
                 this.ticketButtons[allBtnIndex].Enabled = true;
 
+                int clazz = this.isFirstClass ? 1 : 2;
+                string from = this.cmbFrom.SelectedItem.ToString();
+                string to = this.cmbTo.SelectedItem.ToString();
+                bool isInter = this.isInternational;
+
                 for (int basketIndex = 0; basketIndex < this.basket.Count; basketIndex++)
                 {
                     Ticket ticket = this.basket[basketIndex];
-                    int clazz = this.isFirstClass ? 1 : 2;
-                    string from = this.cmbFrom.SelectedItem.ToString();
-                    string to = this.cmbTo.SelectedItem.ToString();
                     if (
                         ticket.seatNumber == (allBtnIndex + 1) && 
-                        ticket.isInternational == this.isInternational &&
+                        (ticket.isInternational == isInter) &&
                         clazz == ticket.clazz &&
                         ticket.from.Equals(from) &&
                         ticket.to.Equals(to)
@@ -228,6 +243,22 @@ namespace TicketReservation
                         this.ticketButtons[allBtnIndex].Enabled = false;
                     }
                 }
+                
+                for (int takenSeatIndex = 0; takenSeatIndex < this.takenTickets.Count; takenSeatIndex++)
+                {
+                    Ticket ticket = this.takenTickets[takenSeatIndex];
+                    if (
+                        ticket.seatNumber == (allBtnIndex + 1) &&
+                        (ticket.isInternational == isInter) &&
+                        ticket.clazz == clazz &&
+                        ticket.from.Equals(from) &&
+                        ticket.to.Equals(to)
+                        )
+                    {
+                        this.ticketButtons[allBtnIndex].Enabled = false;
+                    }
+                }
+                
                
             }
         }
@@ -367,7 +398,7 @@ namespace TicketReservation
 
         private void btnPay_Click(object sender, EventArgs e)
         {
-            //OPEN PAYMENT PAGE
+            new Payment(this.basket, this.userName).Show();
         }
 
         private void cmbFrom_SelectedIndexChanged(object sender, EventArgs e)
@@ -388,7 +419,6 @@ namespace TicketReservation
             db.closeconnection();
             loadSopsVisible(this.isInternational);
             setButtonActive();
-            //this.cmbFrom.SelectedIndexChanged += cmbFrom_SelectedIndexChanged;
         }
 
         private void cmbTo_SelectedIndexChanged(object sender, EventArgs e)

@@ -17,9 +17,11 @@ namespace TicketReservation
         public bool isInternational { get; set; }
         public int pathId { get; set; }
 
-        public Ticket(int id, int clazz, int seatNumber, string progress, int price, bool isInternational, int pathId)
+        public Ticket(int id, string from, string to, int clazz, int seatNumber, string progress, int price, bool isInternational, int pathId)
         {
             this.id = id;
+            this.from = from;
+            this.to = to;
             this.clazz = clazz;
             this.seatNumber = seatNumber;
             this.progress = progress;
