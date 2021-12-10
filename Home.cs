@@ -25,16 +25,38 @@ namespace TicketReservation
         public Home()
         {
             InitializeComponent();
-           
+            this.FormClosed += new FormClosedEventHandler(formClosed);
             initButtons();
             initTakenTickets();
             initDropDowns();
             loadSopsVisible(false);
+            initDataGridView();
+        }
+
+        private void initDataGridView()
+        {
+            this.dgvBasket.UserDeletingRow += DgvBasket_UserDeletingRow1; ;
+
+            this.dgvBasket.Columns.Add("from","From");
+            this.dgvBasket.Columns.Add("to","To");
+            this.dgvBasket.Columns.Add("seatNumber","Seat Number");
+            this.dgvBasket.Columns.Add("price","Price");   
+        }
+
+        private void DgvBasket_UserDeletingRow1(object sender, DataGridViewRowCancelEventArgs e)
+        {
+            int index = this.dgvBasket.CurrentRow.Index;
+            this.basket.RemoveAt(index);
+            setButtonActive();
+        }
+
+        private static void formClosed(object sender, FormClosedEventArgs e)
+        {
+            Application.Exit();
         }
 
         private void loadSopsVisible(bool isInternational)
         {
-
             this.lbStops.Visible = isInternational;
             this.lvStops.Visible = isInternational;
             if (isInternational)
@@ -89,19 +111,6 @@ namespace TicketReservation
                 this.takenTickets.Add(new Ticket(id, clazz, seatNumber, progress, price, isInternational, pathId));
             }
             db.closeconnection();
-        }
-
-        private void exitOnClose(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            // Display a MsgBox asking the user to save changes or abort.
-            if (MessageBox.Show("Do you want to save changes to your text?", "My Application",
-                MessageBoxButtons.YesNo) == DialogResult.Yes)
-            {
-                // Cancel the Closing event from closing the form.
-                e.Cancel = true;
-                // Call method to save file...
-            }
-            
         }
 
         private void initDropDowns()
@@ -184,7 +193,7 @@ namespace TicketReservation
         private void setButtons()
         {
             int index = 1;
-            foreach(Button btn in this.ticketButtons) //Later I shoud iterate through the database's seats for this route
+            foreach(Button btn in this.ticketButtons)
             {
                 btn.Click += seatClick;
                 btn.Text = index+"";
@@ -193,20 +202,33 @@ namespace TicketReservation
                 index++;
             }
             setButtonColor();
-            //setButtonActive(0);
         }
 
-        private void setButtonActive(int index)
+        private void setButtonActive()
         {
 
-            for (int i = 0; i < this.basket.Count; i++)
+            for (int allBtnIndex = 0; allBtnIndex < this.ticketButtons.Count; allBtnIndex++)
             {
-                int clazz = this.isFirstClass ? 1 : 2;
-                Ticket ticket = this.basket[i];
-                if (index == ticket.seatNumber && ticket.isInternational == this.isInternational && clazz == ticket.clazz)
+                this.ticketButtons[allBtnIndex].Enabled = true;
+
+                for (int basketIndex = 0; basketIndex < this.basket.Count; basketIndex++)
                 {
-                    this.ticketButtons[index - 1].Enabled = false;
+                    Ticket ticket = this.basket[basketIndex];
+                    int clazz = this.isFirstClass ? 1 : 2;
+                    string from = this.cmbFrom.SelectedItem.ToString();
+                    string to = this.cmbTo.SelectedItem.ToString();
+                    if (
+                        ticket.seatNumber == (allBtnIndex + 1) && 
+                        ticket.isInternational == this.isInternational &&
+                        clazz == ticket.clazz &&
+                        ticket.from.Equals(from) &&
+                        ticket.to.Equals(to)
+                        )
+                    {
+                        this.ticketButtons[allBtnIndex].Enabled = false;
+                    }
                 }
+               
             }
         }
 
@@ -214,6 +236,8 @@ namespace TicketReservation
         {
             foreach (Button btn in this.ticketButtons) 
             {
+                btn.EnabledChanged += Btn_EnabledChanged;
+
                 if (this.isFirstClass)
                 {
                     btn.BackColor = Color.AliceBlue;
@@ -226,26 +250,55 @@ namespace TicketReservation
 
         }
 
+        private void Btn_EnabledChanged(object sender, EventArgs e)
+        {
+            Button btn = (Button)sender;
+            if(!btn.Enabled)
+            {
+                btn.BackColor = Color.DimGray;
+            }
+            else
+            {
+                if (this.isFirstClass)
+                {
+                    btn.BackColor = Color.AliceBlue;
+                }
+                else
+                {
+                    btn.BackColor = Color.Honeydew;
+                }
+            }
+        }
+
         private void addToBasket()
         {
-            this.lvBasket.Items.Clear();
+            this.dgvBasket.Rows.Clear();
             for (int i = 0; i < this.basket.Count; i++)
             {
-                this.lvBasket.Items.Add(this.basket[i].ToString());
+                var index = this.dgvBasket.Rows.Add();
+                this.dgvBasket.Rows[index].Cells["from"].Value = this.basket[i].from;
+                this.dgvBasket.Rows[index].Cells["to"].Value = this.basket[i].to;
+                this.dgvBasket.Rows[index].Cells["seatNumber"].Value = this.basket[i].seatNumber;
+                this.dgvBasket.Rows[index].Cells["price"].Value = this.basket[i].price;
             }
 
-            this.lvBasket.Refresh();
-            
+            this.dgvBasket.Refresh();
+        }
+
+        private bool isNeighborSeatTaken(int index)
+        {
+            //TODO
+            //IMPELEMENT CODE HERE
+            return false;
         }
 
         private void seatClick(object sender, EventArgs e)
         {
             string seatNumber = (sender as Button).Text;
-            setButtonActive(Int32.Parse(seatNumber));
+            setButtonActive();
             string[] progresses = new string[] { "Free", "In basket", "Taken" };
             int price = calcPrice();
             
-           
             int clazz = this.isFirstClass ? 1 : 2;
             string from = this.cmbFrom.SelectedItem.ToString();
             string to = this.cmbTo.SelectedItem.ToString();
@@ -253,12 +306,6 @@ namespace TicketReservation
             this.basket.Add(new Ticket(from, to, clazz, Int32.Parse(seatNumber), progresses[1], price, this.isInternational, getPathId(from, to)));
             addToBasket();
             (sender as Button).Enabled = false;
-
-            //this.basket.Add(new Ticket()); ✔
-            //TODO
-            //If a seat is not taken
-            //If a seat is out of distance
-            //
         }
 
         private int calcPrice()
@@ -314,7 +361,8 @@ namespace TicketReservation
 
         private void btnLogOut_Click(object sender, EventArgs e)
         {
-            System.Windows.Forms.Application.Exit();
+            this.Hide();
+            new Login().Show();
         }
 
         private void btnPay_Click(object sender, EventArgs e)
@@ -339,6 +387,7 @@ namespace TicketReservation
             this.cmbTo.SelectedItem = dt.Rows[0][0].ToString();
             db.closeconnection();
             loadSopsVisible(this.isInternational);
+            setButtonActive();
             //this.cmbFrom.SelectedIndexChanged += cmbFrom_SelectedIndexChanged;
         }
 
@@ -359,6 +408,7 @@ namespace TicketReservation
             this.cmbFrom.SelectedItem = dt.Rows[0][0].ToString();
             db.closeconnection();
             loadSopsVisible(this.isInternational);
+            setButtonActive();
         }
 
         private void chbInternational_CheckedChanged(object sender, EventArgs e)
@@ -368,17 +418,14 @@ namespace TicketReservation
             this.isInternational = this.chbInternational.Checked;
             loadPaths(this.chbInternational.Checked ? 1 : 0);
             loadSopsVisible(this.isInternational);
+            setButtonActive();
         }
 
         private void chFirstClass_CheckedChanged(object sender, EventArgs e)
         {
-            /*
-            string seatNumber = (sender as Button).Text;
-            int index = Int32.Parse(seatNumber);
-            setButtonActive(index);
-            */
             this.isFirstClass = this.chFirstClass.Checked;
             setButtonColor();
+            setButtonActive();
         }
     }
 }

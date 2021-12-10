@@ -62,13 +62,14 @@ namespace TicketReservation
             this.seat2 = new System.Windows.Forms.Button();
             this.seat1 = new System.Windows.Forms.Button();
             this.btnPay = new System.Windows.Forms.Button();
-            this.lvBasket = new System.Windows.Forms.ListView();
             this.label3 = new System.Windows.Forms.Label();
             this.chbInternational = new System.Windows.Forms.CheckBox();
             this.chFirstClass = new System.Windows.Forms.CheckBox();
             this.lbStops = new System.Windows.Forms.Label();
             this.lvStops = new System.Windows.Forms.ListView();
+            this.dgvBasket = new System.Windows.Forms.DataGridView();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvBasket)).BeginInit();
             this.SuspendLayout();
             // 
             // btnInfo
@@ -385,7 +386,7 @@ namespace TicketReservation
             // 
             // btnPay
             // 
-            this.btnPay.Location = new System.Drawing.Point(1017, 572);
+            this.btnPay.Location = new System.Drawing.Point(1017, 615);
             this.btnPay.Name = "btnPay";
             this.btnPay.Size = new System.Drawing.Size(128, 56);
             this.btnPay.TabIndex = 8;
@@ -393,20 +394,11 @@ namespace TicketReservation
             this.btnPay.UseVisualStyleBackColor = true;
             this.btnPay.Click += new System.EventHandler(this.btnPay_Click);
             // 
-            // lvBasket
-            // 
-            this.lvBasket.HideSelection = false;
-            this.lvBasket.Location = new System.Drawing.Point(941, 360);
-            this.lvBasket.Name = "lvBasket";
-            this.lvBasket.Size = new System.Drawing.Size(276, 185);
-            this.lvBasket.TabIndex = 9;
-            this.lvBasket.UseCompatibleStateImageBehavior = false;
-            // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Lucida Sans Typewriter", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label3.Location = new System.Drawing.Point(941, 330);
+            this.label3.Location = new System.Drawing.Point(941, 389);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(62, 17);
             this.label3.TabIndex = 10;
@@ -449,21 +441,32 @@ namespace TicketReservation
             this.lvStops.HideSelection = false;
             this.lvStops.Location = new System.Drawing.Point(941, 215);
             this.lvStops.Name = "lvStops";
-            this.lvStops.Size = new System.Drawing.Size(276, 102);
+            this.lvStops.Size = new System.Drawing.Size(276, 136);
             this.lvStops.TabIndex = 9;
             this.lvStops.UseCompatibleStateImageBehavior = false;
+            // 
+            // dgvBasket
+            // 
+            this.dgvBasket.AllowUserToAddRows = false;
+            this.dgvBasket.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvBasket.Location = new System.Drawing.Point(941, 409);
+            this.dgvBasket.Name = "dgvBasket";
+            this.dgvBasket.ReadOnly = true;
+            this.dgvBasket.RowTemplate.Height = 25;
+            this.dgvBasket.Size = new System.Drawing.Size(276, 200);
+            this.dgvBasket.TabIndex = 14;
             // 
             // Home
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1261, 698);
+            this.Controls.Add(this.dgvBasket);
             this.Controls.Add(this.chFirstClass);
             this.Controls.Add(this.chbInternational);
             this.Controls.Add(this.lbStops);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.lvStops);
-            this.Controls.Add(this.lvBasket);
             this.Controls.Add(this.btnPay);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.label2);
@@ -476,6 +479,7 @@ namespace TicketReservation
             this.Name = "Home";
             this.Text = "Home";
             this.panel1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgvBasket)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -516,11 +520,11 @@ namespace TicketReservation
         private System.Windows.Forms.Button seat2;
         private System.Windows.Forms.Button seat1;
         private System.Windows.Forms.Button btnPay;
-        private System.Windows.Forms.ListView lvBasket;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.CheckBox chbInternational;
         private System.Windows.Forms.CheckBox chFirstClass;
         private System.Windows.Forms.Label lbStops;
         private System.Windows.Forms.ListView lvStops;
+        private System.Windows.Forms.DataGridView dgvBasket;
     }
 }
