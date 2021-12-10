@@ -12,6 +12,7 @@ namespace TicketReservation
     public partial class Home : Form
     {
         List<Ticket> basket = new List<Ticket>();
+        List<Ticket> takenTickets = new List<Ticket>();
         List<Button> ticketButtons = new List<Button>();
         bool isFirstClass = false;
         bool isInternational = false;
@@ -26,7 +27,68 @@ namespace TicketReservation
             InitializeComponent();
            
             initButtons();
+            initTakenTickets();
             initDropDowns();
+            loadSopsVisible(false);
+        }
+
+        private void loadSopsVisible(bool isInternational)
+        {
+
+            this.lbStops.Visible = isInternational;
+            this.lvStops.Visible = isInternational;
+            if (isInternational)
+            {
+                string from = cmbFrom.SelectedItem.ToString();
+                string to = cmbTo.SelectedItem.ToString();
+                DataTable dt = new DataTable();
+                db.openconnection();
+                SQLiteCommand cmd = new SQLiteCommand("SELECT Stops FROM Path WHERE Leaving_from='" + from + "' AND Destination ='" + to + "'", db.GetConnection());
+                sda = new SQLiteDataAdapter(cmd);
+                sda.Fill(dt);
+                string[] stops = getStopsFromData(dt.Rows[0][0].ToString());
+                db.closeconnection();
+
+                loadStops(stops);
+            }
+        }
+
+        private void loadStops(string[] stops)
+        {
+            this.lvStops.Items.Clear();
+            foreach(string stop in stops)
+            {
+                this.lvStops.Items.Add(stop);
+            }
+        }
+
+        private string[] getStopsFromData(string data)
+        {
+            string [] stops = data.Split(",");
+            return stops;
+        }
+
+        private void initTakenTickets()
+        {
+            DataTable dt = new DataTable();
+            db.openconnection();
+            SQLiteCommand cmd = new SQLiteCommand("SELECT * FROM Ticket", db.GetConnection());
+            sda = new SQLiteDataAdapter(cmd);
+            sda.Fill(dt);
+
+            for (int fromIndex = 0; fromIndex < dt.Rows.Count; fromIndex++)
+            {
+                int id = Int32.Parse(dt.Rows[fromIndex][0].ToString());
+                int clazz = Int32.Parse(dt.Rows[fromIndex][1].ToString());
+                int seatNumber = Int32.Parse(dt.Rows[fromIndex][2].ToString());
+                string progress = dt.Rows[fromIndex][3].ToString();
+                int price = Int32.Parse(dt.Rows[fromIndex][4].ToString());
+                bool isInternational = Int32.Parse(dt.Rows[fromIndex][4].ToString())==1 ? true : false;
+                int pathId = Int32.Parse(dt.Rows[fromIndex][5].ToString());
+
+                this.takenTickets.Add(new Ticket(id, clazz, seatNumber, progress, price, isInternational, pathId));
+            }
+            db.closeconnection();
         }
 
         private void exitOnClose(object sender, System.ComponentModel.CancelEventArgs e)
@@ -131,6 +193,21 @@ namespace TicketReservation
                 index++;
             }
             setButtonColor();
+            //setButtonActive(0);
+        }
+
+        private void setButtonActive(int index)
+        {
+
+            for (int i = 0; i < this.basket.Count; i++)
+            {
+                int clazz = this.isFirstClass ? 1 : 2;
+                Ticket ticket = this.basket[i];
+                if (index == ticket.seatNumber && ticket.isInternational == this.isInternational && clazz == ticket.clazz)
+                {
+                    this.ticketButtons[index - 1].Enabled = false;
+                }
+            }
         }
 
         private void setButtonColor()
@@ -163,19 +240,21 @@ namespace TicketReservation
 
         private void seatClick(object sender, EventArgs e)
         {
+            string seatNumber = (sender as Button).Text;
+            setButtonActive(Int32.Parse(seatNumber));
             string[] progresses = new string[] { "Free", "In basket", "Taken" };
             int price = calcPrice();
             
-            string seatNumber = (sender as Button).Text;
+           
             int clazz = this.isFirstClass ? 1 : 2;
             string from = this.cmbFrom.SelectedItem.ToString();
             string to = this.cmbTo.SelectedItem.ToString();
 
             this.basket.Add(new Ticket(from, to, clazz, Int32.Parse(seatNumber), progresses[1], price, this.isInternational, getPathId(from, to)));
-            //Ticket(string from, string to, int clazz, int seatNumber, string progress, int price, bool isInternational, int pathId)
             addToBasket();
+            (sender as Button).Enabled = false;
 
-            //this.basket.Add(new Ticket());
+            //this.basket.Add(new Ticket()); ✔
             //TODO
             //If a seat is not taken
             //If a seat is out of distance
@@ -259,6 +338,7 @@ namespace TicketReservation
 
             this.cmbTo.SelectedItem = dt.Rows[0][0].ToString();
             db.closeconnection();
+            loadSopsVisible(this.isInternational);
             //this.cmbFrom.SelectedIndexChanged += cmbFrom_SelectedIndexChanged;
         }
 
@@ -278,6 +358,7 @@ namespace TicketReservation
 
             this.cmbFrom.SelectedItem = dt.Rows[0][0].ToString();
             db.closeconnection();
+            loadSopsVisible(this.isInternational);
         }
 
         private void chbInternational_CheckedChanged(object sender, EventArgs e)
@@ -286,10 +367,16 @@ namespace TicketReservation
             this.cmbTo.Items.Clear();
             this.isInternational = this.chbInternational.Checked;
             loadPaths(this.chbInternational.Checked ? 1 : 0);
+            loadSopsVisible(this.isInternational);
         }
 
         private void chFirstClass_CheckedChanged(object sender, EventArgs e)
         {
+            /*
+            string seatNumber = (sender as Button).Text;
+            int index = Int32.Parse(seatNumber);
+            setButtonActive(index);
+            */
             this.isFirstClass = this.chFirstClass.Checked;
             setButtonColor();
         }

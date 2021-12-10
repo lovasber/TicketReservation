@@ -66,6 +66,8 @@ namespace TicketReservation
             this.label3 = new System.Windows.Forms.Label();
             this.chbInternational = new System.Windows.Forms.CheckBox();
             this.chFirstClass = new System.Windows.Forms.CheckBox();
+            this.lbStops = new System.Windows.Forms.Label();
+            this.lvStops = new System.Windows.Forms.ListView();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -394,9 +396,9 @@ namespace TicketReservation
             // lvBasket
             // 
             this.lvBasket.HideSelection = false;
-            this.lvBasket.Location = new System.Drawing.Point(941, 256);
+            this.lvBasket.Location = new System.Drawing.Point(941, 360);
             this.lvBasket.Name = "lvBasket";
-            this.lvBasket.Size = new System.Drawing.Size(276, 289);
+            this.lvBasket.Size = new System.Drawing.Size(276, 185);
             this.lvBasket.TabIndex = 9;
             this.lvBasket.UseCompatibleStateImageBehavior = false;
             // 
@@ -404,7 +406,7 @@ namespace TicketReservation
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Lucida Sans Typewriter", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label3.Location = new System.Drawing.Point(941, 204);
+            this.label3.Location = new System.Drawing.Point(941, 330);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(62, 17);
             this.label3.TabIndex = 10;
@@ -413,7 +415,7 @@ namespace TicketReservation
             // chbInternational
             // 
             this.chbInternational.AutoSize = true;
-            this.chbInternational.Location = new System.Drawing.Point(750, 122);
+            this.chbInternational.Location = new System.Drawing.Point(736, 122);
             this.chbInternational.Name = "chbInternational";
             this.chbInternational.Size = new System.Drawing.Size(93, 19);
             this.chbInternational.TabIndex = 12;
@@ -424,13 +426,32 @@ namespace TicketReservation
             // chFirstClass
             // 
             this.chFirstClass.AutoSize = true;
-            this.chFirstClass.Location = new System.Drawing.Point(941, 122);
+            this.chFirstClass.Location = new System.Drawing.Point(887, 120);
             this.chFirstClass.Name = "chFirstClass";
             this.chFirstClass.Size = new System.Drawing.Size(71, 19);
             this.chFirstClass.TabIndex = 13;
             this.chFirstClass.Text = "1st Class";
             this.chFirstClass.UseVisualStyleBackColor = true;
             this.chFirstClass.CheckedChanged += new System.EventHandler(this.chFirstClass_CheckedChanged);
+            // 
+            // lbStops
+            // 
+            this.lbStops.AutoSize = true;
+            this.lbStops.Font = new System.Drawing.Font("Lucida Sans Typewriter", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lbStops.Location = new System.Drawing.Point(941, 189);
+            this.lbStops.Name = "lbStops";
+            this.lbStops.Size = new System.Drawing.Size(53, 17);
+            this.lbStops.TabIndex = 10;
+            this.lbStops.Text = "Stops";
+            // 
+            // lvStops
+            // 
+            this.lvStops.HideSelection = false;
+            this.lvStops.Location = new System.Drawing.Point(941, 215);
+            this.lvStops.Name = "lvStops";
+            this.lvStops.Size = new System.Drawing.Size(276, 102);
+            this.lvStops.TabIndex = 9;
+            this.lvStops.UseCompatibleStateImageBehavior = false;
             // 
             // Home
             // 
@@ -439,7 +460,9 @@ namespace TicketReservation
             this.ClientSize = new System.Drawing.Size(1261, 698);
             this.Controls.Add(this.chFirstClass);
             this.Controls.Add(this.chbInternational);
+            this.Controls.Add(this.lbStops);
             this.Controls.Add(this.label3);
+            this.Controls.Add(this.lvStops);
             this.Controls.Add(this.lvBasket);
             this.Controls.Add(this.btnPay);
             this.Controls.Add(this.panel1);
@@ -497,5 +520,7 @@ namespace TicketReservation
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.CheckBox chbInternational;
         private System.Windows.Forms.CheckBox chFirstClass;
+        private System.Windows.Forms.Label lbStops;
+        private System.Windows.Forms.ListView lvStops;
     }
 }

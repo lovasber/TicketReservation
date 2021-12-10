@@ -7,15 +7,26 @@ namespace TicketReservation
     class Ticket
     {
 
+        public int id { get; set; }
         public string from { get; set; }
         public string to { get; set; }
-        private int clazz { get; set; }
-        private int seatNumber { get; set; }
-        private string progress { get; set; }
-        private int price { get; set; }
-        private bool isInternational { get; set; }
-        private int pathId { get; set; }
+        public int clazz { get; set; }
+        public int seatNumber { get; set; }
+        public string progress { get; set; }
+        public int price { get; set; }
+        public bool isInternational { get; set; }
+        public int pathId { get; set; }
 
+        public Ticket(int id, int clazz, int seatNumber, string progress, int price, bool isInternational, int pathId)
+        {
+            this.id = id;
+            this.clazz = clazz;
+            this.seatNumber = seatNumber;
+            this.progress = progress;
+            this.price = price;
+            this.isInternational = isInternational;
+            this.pathId = pathId;
+        }
 
         public Ticket(string from, string to, int clazz, int seatNumber, string progress, int price, bool isInternational, int pathId)
         {
