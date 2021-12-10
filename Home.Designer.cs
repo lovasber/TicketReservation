@@ -66,10 +66,11 @@ namespace TicketReservation
             this.chbInternational = new System.Windows.Forms.CheckBox();
             this.chFirstClass = new System.Windows.Forms.CheckBox();
             this.lbStops = new System.Windows.Forms.Label();
-            this.lvStops = new System.Windows.Forms.ListView();
             this.dgvBasket = new System.Windows.Forms.DataGridView();
+            this.dgvStops = new System.Windows.Forms.DataGridView();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvBasket)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvStops)).BeginInit();
             this.SuspendLayout();
             // 
             // btnInfo
@@ -436,15 +437,6 @@ namespace TicketReservation
             this.lbStops.TabIndex = 10;
             this.lbStops.Text = "Stops";
             // 
-            // lvStops
-            // 
-            this.lvStops.HideSelection = false;
-            this.lvStops.Location = new System.Drawing.Point(941, 215);
-            this.lvStops.Name = "lvStops";
-            this.lvStops.Size = new System.Drawing.Size(276, 136);
-            this.lvStops.TabIndex = 9;
-            this.lvStops.UseCompatibleStateImageBehavior = false;
-            // 
             // dgvBasket
             // 
             this.dgvBasket.AllowUserToAddRows = false;
@@ -456,17 +448,29 @@ namespace TicketReservation
             this.dgvBasket.Size = new System.Drawing.Size(276, 200);
             this.dgvBasket.TabIndex = 14;
             // 
+            // dgvStops
+            // 
+            this.dgvStops.AllowUserToAddRows = false;
+            this.dgvStops.AllowUserToDeleteRows = false;
+            this.dgvStops.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvStops.Location = new System.Drawing.Point(941, 215);
+            this.dgvStops.Name = "dgvStops";
+            this.dgvStops.ReadOnly = true;
+            this.dgvStops.RowTemplate.Height = 25;
+            this.dgvStops.Size = new System.Drawing.Size(276, 150);
+            this.dgvStops.TabIndex = 15;
+            // 
             // Home
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1261, 698);
+            this.Controls.Add(this.dgvStops);
             this.Controls.Add(this.dgvBasket);
             this.Controls.Add(this.chFirstClass);
             this.Controls.Add(this.chbInternational);
             this.Controls.Add(this.lbStops);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.lvStops);
             this.Controls.Add(this.btnPay);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.label2);
@@ -480,6 +484,7 @@ namespace TicketReservation
             this.Text = "Home";
             this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvBasket)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvStops)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -524,7 +529,7 @@ namespace TicketReservation
         private System.Windows.Forms.CheckBox chbInternational;
         private System.Windows.Forms.CheckBox chFirstClass;
         private System.Windows.Forms.Label lbStops;
-        private System.Windows.Forms.ListView lvStops;
         private System.Windows.Forms.DataGridView dgvBasket;
+        private System.Windows.Forms.DataGridView dgvStops;
     }
 }

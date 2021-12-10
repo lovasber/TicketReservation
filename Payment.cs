@@ -202,26 +202,6 @@ namespace TicketReservation
                 " values ('" + user_Id + "', '" + ticket_Id + "', '" + cupon_Code + "', '"+ clazz + "', '" + seatNumber + "')", db.GetConnection());
                 cmd.ExecuteNonQuery();
 
-                /*
-                 CREATE TABLE "User_Order" (
-	                "User_id"	INTEGER NOT NULL,
-	                "Ticket_id"	INTEGER NOT NULL,
-	                "Cupon_Code"	TEXT,
-	                "Class"	INTEGER,
-	                "Seat_Number"	INTEGER
-                );
-                /*
-                CREATE TABLE "Ticket" (
-	                "Id"	INTEGER,
-	                "Class"	INTEGER,
-	                "Seat_Number"	INTEGER,
-	                "Progress"	TEXT,
-	                "Price"	INTEGER,
-	                "Is_International"	INTEGER,
-	                "Path_Id"	INTEGER,
-	                PRIMARY KEY("Id" AUTOINCREMENT)
-                );
-                 */
             }
 
             db.closeconnection();

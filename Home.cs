@@ -48,7 +48,9 @@ namespace TicketReservation
             this.dgvBasket.Columns.Add("from","From");
             this.dgvBasket.Columns.Add("to","To");
             this.dgvBasket.Columns.Add("seatNumber","Seat Number");
-            this.dgvBasket.Columns.Add("price","Price");   
+            this.dgvBasket.Columns.Add("price","Price");
+
+            this.dgvStops.Columns.Add("path", "Path");
         }
 
         private void DgvBasket_UserDeletingRow1(object sender, DataGridViewRowCancelEventArgs e)
@@ -66,7 +68,7 @@ namespace TicketReservation
         private void loadSopsVisible(bool isInternational)
         {
             this.lbStops.Visible = isInternational;
-            this.lvStops.Visible = isInternational;
+            this.dgvStops.Visible = isInternational;
             if (isInternational)
             {
                 string from = cmbFrom.SelectedItem.ToString();
@@ -85,11 +87,26 @@ namespace TicketReservation
 
         private void loadStops(string[] stops)
         {
-            this.lvStops.Items.Clear();
+            this.dgvStops.Rows.Clear();
+            for (int i = 0; i < stops.Length; i++)
+            {
+                //var index = this.dgvBasket.Rows.Add();
+                //this.dgvBasket.Rows[index].Cells["path"].Value = this.basket[i].from;
+                var index = this.dgvStops.Rows.Add();
+                this.dgvStops.Rows[index].Cells["path"].Value = stops[i];
+                
+            }
+
+            this.dgvStops.Refresh();
+            /*
+            //--------------
+            this.dgvStops.Rows.Clear();
             foreach(string stop in stops)
             {
-                this.lvStops.Items.Add(stop);
+                var index = this.dgvBasket.Rows.Add();
+                this.dgvStops.Rows[index].Cells["path"].Value = stop;
             }
+            */
         }
 
         private string[] getStopsFromData(string data)
