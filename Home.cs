@@ -17,11 +17,10 @@ namespace TicketReservation
         bool isFirstClass = false;
         bool isInternational = false;
         private string userName = "";
+        private Color COLOR_DISABLED = Color.DimGray;
 
         Database db = new Database();
         SQLiteDataAdapter sda = new SQLiteDataAdapter();
-        SQLiteCommand cmd = new SQLiteCommand();
-
         
         public Home(string userName)
         {
@@ -39,6 +38,26 @@ namespace TicketReservation
         private void initUser(string userName)
         {
             this.userName = userName;
+            if (!isAdmin(userName))
+            {
+                this.btnOrders.Visible = false;
+            }
+        }
+
+        private bool isAdmin(string userName)
+        {
+            bool isAdmin = false;
+
+            DataTable dt = new DataTable();
+            db.openconnection();
+            SQLiteCommand cmd = new SQLiteCommand("SELECT Is_Admin FROM User WHERE Name='" + userName + "'", db.GetConnection());
+            sda = new SQLiteDataAdapter(cmd);
+            sda.Fill(dt);
+
+            isAdmin = (Int32.Parse(dt.Rows[0][0].ToString()) == 1) ? true : false;
+            db.closeconnection();
+
+            return isAdmin;
         }
 
         private void initDataGridView()
@@ -241,6 +260,12 @@ namespace TicketReservation
             {
                 this.ticketButtons[allBtnIndex].Enabled = true;
 
+                if (this.ticketButtons[allBtnIndex].BackColor == COLOR_DISABLED)
+                {
+                    this.ticketButtons[allBtnIndex].Click += seatClick;
+                }
+                
+
                 int clazz = this.isFirstClass ? 1 : 2;
                 string from = this.cmbFrom.SelectedItem.ToString();
                 string to = this.cmbTo.SelectedItem.ToString();
@@ -257,7 +282,10 @@ namespace TicketReservation
                         ticket.to.Equals(to)
                         )
                     {
-                        this.ticketButtons[allBtnIndex].Enabled = false;
+                        // this.ticketButtons[allBtnIndex].Enabled = false;
+                        this.ticketButtons[allBtnIndex].BackColor = COLOR_DISABLED;
+                        this.ticketButtons[allBtnIndex].Click -= seatClick;
+                       
                     }
                 }
                 
@@ -273,6 +301,9 @@ namespace TicketReservation
                         )
                     {
                         this.ticketButtons[allBtnIndex].Enabled = false;
+                        //this.ticketButtons[allBtnIndex]. = false;
+                        
+                        //this.ticketButtons[allBtnIndex].Click -= seatClick;
                     }
                 }
                 
@@ -294,6 +325,7 @@ namespace TicketReservation
                 {
                     btn.BackColor = Color.Honeydew;
                 }
+                
             }
 
         }
@@ -303,7 +335,7 @@ namespace TicketReservation
             Button btn = (Button)sender;
             if(!btn.Enabled)
             {
-                btn.BackColor = Color.DimGray;
+                btn.BackColor = COLOR_DISABLED;
             }
             else
             {
@@ -333,27 +365,76 @@ namespace TicketReservation
             this.dgvBasket.Refresh();
         }
 
-        private bool isNeighborSeatTaken(int index)
+        private bool isNeighborSeatFree(int index)
         {
-            //TODO
-            //IMPELEMENT CODE HERE
-            return false;
+            int maxSize = this.ticketButtons.Count;
+            bool isFree = true;
+
+            //UPPER 
+            if (0 <= index - 8)
+            {
+                isFree = ticketButtons[index-8].Enabled;
+                if (!isFree)
+                {
+                    return false;
+                }
+            }
+            //BOTTOM 
+            if(index + 8 < maxSize)
+            {
+                isFree = ticketButtons[index + 8].Enabled;
+                if (!isFree)
+                {
+                    return false;
+                }
+            }
+            //LEFT
+            if (0 <= index -1)
+            {
+                isFree = ticketButtons[index - 1].Enabled;
+                if (!isFree)
+                {
+                    return false;
+                }
+            }
+            //RIGHT
+            if (index +1 < maxSize)
+            {
+                isFree = ticketButtons[index +1 ].Enabled;
+                if (!isFree)
+                {
+                    return false;
+                }
+            }
+            
+            return isFree;
         }
 
         private void seatClick(object sender, EventArgs e)
         {
             string seatNumber = (sender as Button).Text;
-            setButtonActive();
-            string[] progresses = new string[] { "Free", "In basket", "Taken" };
-            int price = calcPrice();
-            
-            int clazz = this.isFirstClass ? 1 : 2;
-            string from = this.cmbFrom.SelectedItem.ToString();
-            string to = this.cmbTo.SelectedItem.ToString();
+            int seatNumberInt = Int32.Parse(seatNumber);
+            if (isNeighborSeatFree(seatNumberInt - 1))
+            {
+                setButtonActive();
+                string[] progresses = new string[] { "Free", "In basket", "Taken" };
+                int price = calcPrice();
 
-            this.basket.Add(new Ticket(from, to, clazz, Int32.Parse(seatNumber), progresses[1], price, this.isInternational, getPathId(from, to)));
-            addToBasket();
-            (sender as Button).Enabled = false;
+                int clazz = this.isFirstClass ? 1 : 2;
+                string from = this.cmbFrom.SelectedItem.ToString();
+                string to = this.cmbTo.SelectedItem.ToString();
+
+                this.basket.Add(new Ticket(from, to, clazz, Int32.Parse(seatNumber), progresses[1], price, this.isInternational, getPathId(from, to)));
+                addToBasket();
+                //(sender as Button).Enabled = false;
+                (sender as Button).Click -= seatClick;
+                (sender as Button).BackColor = Color.DimGray;
+            }
+            else
+            {
+                MessageBox.Show("Due to Covid you can not take this seat.");
+            }
+            
         }
 
         private int calcPrice()
@@ -435,6 +516,7 @@ namespace TicketReservation
             this.cmbTo.SelectedItem = dt.Rows[0][0].ToString();
             db.closeconnection();
             loadSopsVisible(this.isInternational);
+            setButtonColor();
             setButtonActive();
         }
 
@@ -456,6 +538,7 @@ namespace TicketReservation
             db.closeconnection();
             loadSopsVisible(this.isInternational);
             setButtonActive();
+            setButtonColor();
         }
 
         private void chbInternational_CheckedChanged(object sender, EventArgs e)
@@ -466,6 +549,7 @@ namespace TicketReservation
             loadPaths(this.chbInternational.Checked ? 1 : 0);
             loadSopsVisible(this.isInternational);
             setButtonActive();
+            setButtonColor();
         }
 
         private void chFirstClass_CheckedChanged(object sender, EventArgs e)
@@ -473,6 +557,7 @@ namespace TicketReservation
             this.isFirstClass = this.chFirstClass.Checked;
             setButtonColor();
             setButtonActive();
+
         }
     }
 }

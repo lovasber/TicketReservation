@@ -30,7 +30,7 @@ namespace TicketReservation
         private void InitializeComponent()
         {
             this.btnInfo = new System.Windows.Forms.Button();
-            this.btnMyTickets = new System.Windows.Forms.Button();
+            this.btnOrders = new System.Windows.Forms.Button();
             this.btnLogOut = new System.Windows.Forms.Button();
             this.cmbFrom = new System.Windows.Forms.ComboBox();
             this.cmbTo = new System.Windows.Forms.ComboBox();
@@ -83,15 +83,15 @@ namespace TicketReservation
             this.btnInfo.UseVisualStyleBackColor = true;
             this.btnInfo.Click += new System.EventHandler(this.btnInfoClick);
             // 
-            // btnMyTickets
+            // btnOrders
             // 
-            this.btnMyTickets.Location = new System.Drawing.Point(556, 34);
-            this.btnMyTickets.Name = "btnMyTickets";
-            this.btnMyTickets.Size = new System.Drawing.Size(75, 23);
-            this.btnMyTickets.TabIndex = 1;
-            this.btnMyTickets.Text = "My tickets";
-            this.btnMyTickets.UseVisualStyleBackColor = true;
-            this.btnMyTickets.Click += new System.EventHandler(this.btnMyTickets_Click);
+            this.btnOrders.Location = new System.Drawing.Point(556, 34);
+            this.btnOrders.Name = "btnOrders";
+            this.btnOrders.Size = new System.Drawing.Size(75, 23);
+            this.btnOrders.TabIndex = 1;
+            this.btnOrders.Text = "My tickets";
+            this.btnOrders.UseVisualStyleBackColor = true;
+            this.btnOrders.Click += new System.EventHandler(this.btnMyTickets_Click);
             // 
             // btnLogOut
             // 
@@ -478,7 +478,7 @@ namespace TicketReservation
             this.Controls.Add(this.cmbTo);
             this.Controls.Add(this.cmbFrom);
             this.Controls.Add(this.btnLogOut);
-            this.Controls.Add(this.btnMyTickets);
+            this.Controls.Add(this.btnOrders);
             this.Controls.Add(this.btnInfo);
             this.Name = "Home";
             this.Text = "Home";
@@ -493,7 +493,7 @@ namespace TicketReservation
         #endregion
 
         private System.Windows.Forms.Button btnInfo;
-        private System.Windows.Forms.Button btnMyTickets;
+        private System.Windows.Forms.Button btnOrders;
         private System.Windows.Forms.Button btnLogOut;
         private System.Windows.Forms.ComboBox cmbFrom;
         private System.Windows.Forms.ComboBox cmbTo;
