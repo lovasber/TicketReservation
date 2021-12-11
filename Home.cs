@@ -272,8 +272,7 @@ namespace TicketReservation
                         )
                     {
                         this.ticketButtons[allBtnIndex].BackColor = COLOR_DISABLED;
-                        this.ticketButtons[allBtnIndex].Click -= seatClick;
-                       
+                        this.ticketButtons[allBtnIndex].Click -= seatClick;      
                     }
                 }
                 
@@ -291,8 +290,6 @@ namespace TicketReservation
                         this.ticketButtons[allBtnIndex].Enabled = false;
                     }
                 }
-                
-               
             }
         }
 
@@ -310,7 +307,12 @@ namespace TicketReservation
                 {
                     btn.BackColor = Color.Honeydew;
                 }
-                
+
+                if (!btn.Enabled)
+                {
+                    btn.BackColor = COLOR_DISABLED;
+                }
+
             }
 
         }
@@ -539,9 +541,8 @@ namespace TicketReservation
         private void chFirstClass_CheckedChanged(object sender, EventArgs e)
         {
             this.isFirstClass = this.chFirstClass.Checked;
-            setButtonColor();
             setButtonActive();
-
+            setButtonColor();
         }
     }
 }
