@@ -178,15 +178,12 @@ namespace TicketReservation
             foreach (Ticket ticket in this.basket)
             {
                 int clazz = ticket.clazz;
-                string from = ticket.from;
-                string to = ticket.to;
-
                 int seatNumber = ticket.seatNumber;
                 int price = ticket.price;
                 int isInternational = ticket.isInternational ? 1 : 0;
                 string progress = ticket.progress;
                 int pathId = ticket.pathId;
-
+                
                 cmd = new SQLiteCommand("INSERT INTO Ticket(Class, Seat_Number, Progress, Price, Is_International, Path_Id) " +
                     "VALUES ('"+clazz+"', '"+seatNumber+"', '"+progress+ "', '" + price + "', '" + isInternational+"', '"+pathId+"' )", db.GetConnection());
                 cmd.ExecuteNonQuery();
@@ -195,13 +192,12 @@ namespace TicketReservation
 
                 int ticket_Id = getTicketId();
                 
-
                 db.openconnection();
                 cmd = new SQLiteCommand("" +
                 "Insert INTO User_Order (User_id, Ticket_id, Cupon_Code, Class, Seat_Number)" +
                 " values ('" + user_Id + "', '" + ticket_Id + "', '" + cupon_Code + "', '"+ clazz + "', '" + seatNumber + "')", db.GetConnection());
                 cmd.ExecuteNonQuery();
-
+                
             }
 
             db.closeconnection();

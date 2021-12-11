@@ -485,7 +485,7 @@ namespace TicketReservation
 
         private void btnMyTickets_Click(object sender, EventArgs e)
         {
-            //OPEN MY TICKETS PAGE
+            new Orders().Show();
         }
 
         private void btnLogOut_Click(object sender, EventArgs e)
