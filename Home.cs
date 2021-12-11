@@ -109,23 +109,12 @@ namespace TicketReservation
             this.dgvStops.Rows.Clear();
             for (int i = 0; i < stops.Length; i++)
             {
-                //var index = this.dgvBasket.Rows.Add();
-                //this.dgvBasket.Rows[index].Cells["path"].Value = this.basket[i].from;
                 var index = this.dgvStops.Rows.Add();
                 this.dgvStops.Rows[index].Cells["path"].Value = stops[i];
                 
             }
 
             this.dgvStops.Refresh();
-            /*
-            //--------------
-            this.dgvStops.Rows.Clear();
-            foreach(string stop in stops)
-            {
-                var index = this.dgvBasket.Rows.Add();
-                this.dgvStops.Rows[index].Cells["path"].Value = stop;
-            }
-            */
         }
 
         private string[] getStopsFromData(string data)
@@ -282,7 +271,6 @@ namespace TicketReservation
                         ticket.to.Equals(to)
                         )
                     {
-                        // this.ticketButtons[allBtnIndex].Enabled = false;
                         this.ticketButtons[allBtnIndex].BackColor = COLOR_DISABLED;
                         this.ticketButtons[allBtnIndex].Click -= seatClick;
                        
@@ -301,9 +289,6 @@ namespace TicketReservation
                         )
                     {
                         this.ticketButtons[allBtnIndex].Enabled = false;
-                        //this.ticketButtons[allBtnIndex]. = false;
-                        
-                        //this.ticketButtons[allBtnIndex].Click -= seatClick;
                     }
                 }
                 
@@ -426,7 +411,6 @@ namespace TicketReservation
 
                 this.basket.Add(new Ticket(from, to, clazz, Int32.Parse(seatNumber), progresses[1], price, this.isInternational, getPathId(from, to)));
                 addToBasket();
-                //(sender as Button).Enabled = false;
                 (sender as Button).Click -= seatClick;
                 (sender as Button).BackColor = Color.DimGray;
             }
