@@ -23,49 +23,6 @@ namespace TicketReservation
             InitializeComponent();
         }
 
-        private void registerBtnClick(object sender, EventArgs e)
-        {
-            
-            if (tbUsername.Text.Length != 0 && tbPassword.Text.Length != 0)
-            {
-                if (!alreadyExistingName(tbUsername.Text))
-                {
-                    db.openconnection();
-                    cmd = new SQLiteCommand("Insert INTO User (Name, Password, Is_admin) values ('" + tbUsername.Text + "', '" + tbPassword.Text + "', 0)", db.GetConnection());
-                    cmd.ExecuteNonQuery();
-                    db.closeconnection();
-                    MessageBox.Show("Successful login");
-                    //HOME
-                }
-                else
-                {
-                    MessageBox.Show("Username already taken!");
-                }
-
-            }
-            else
-            {
-                MessageBox.Show("Please fill all the fields!");
-            }
-
-        }
-
-        private bool alreadyExistingName(String userName)
-        {
-            DataTable dt = new DataTable();
-            db.openconnection();
-            SQLiteCommand cmd = new SQLiteCommand("SELECT COUNT(*) FROM User WHERE Name='" + userName + "'", db.GetConnection());
-            sda = new SQLiteDataAdapter(cmd);
-            sda.Fill(dt);
-
-
-            if (dt.Rows[0][0].ToString() == "1")
-            {
-                return true;
-            }
-
-            return false;
-        }
 
         private void loginBtnClick(object sender, EventArgs e)
         {
@@ -88,6 +45,12 @@ namespace TicketReservation
 
             db.closeconnection();
           
+        }
+
+        private void btnRegister_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            new Register().Show();
         }
     }
 }
