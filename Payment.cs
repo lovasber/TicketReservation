@@ -125,7 +125,7 @@ namespace TicketReservation
 
         private void setCuponPrice(int cuponValue)
         {
-            
+            this.price = calcPrice();
             int newPrice = (int)(this.price * ((100 - (double)(cuponValue)) / 100));
             this.price = newPrice;
             this.lbTotalValue.Text = newPrice + " Ft";

@@ -34,6 +34,8 @@ namespace TicketReservation
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.lbIncome = new System.Windows.Forms.Label();
+            this.chFirstClass = new System.Windows.Forms.CheckBox();
+            this.chbInternational = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -83,11 +85,35 @@ namespace TicketReservation
             this.lbIncome.TabIndex = 12;
             this.lbIncome.Text = "Ft";
             // 
+            // chFirstClass
+            // 
+            this.chFirstClass.AutoSize = true;
+            this.chFirstClass.Location = new System.Drawing.Point(555, 103);
+            this.chFirstClass.Name = "chFirstClass";
+            this.chFirstClass.Size = new System.Drawing.Size(71, 19);
+            this.chFirstClass.TabIndex = 15;
+            this.chFirstClass.Text = "1st Class";
+            this.chFirstClass.UseVisualStyleBackColor = true;
+            this.chFirstClass.CheckedChanged += new System.EventHandler(this.chFirstClass_CheckedChanged);
+            // 
+            // chbInternational
+            // 
+            this.chbInternational.AutoSize = true;
+            this.chbInternational.Location = new System.Drawing.Point(403, 105);
+            this.chbInternational.Name = "chbInternational";
+            this.chbInternational.Size = new System.Drawing.Size(93, 19);
+            this.chbInternational.TabIndex = 14;
+            this.chbInternational.Text = "International";
+            this.chbInternational.UseVisualStyleBackColor = true;
+            this.chbInternational.CheckedChanged += new System.EventHandler(this.chbInternational_CheckedChanged);
+            // 
             // Orders
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1019, 559);
+            this.Controls.Add(this.chFirstClass);
+            this.Controls.Add(this.chbInternational);
             this.Controls.Add(this.lbIncome);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.comboBox1);
@@ -108,5 +134,7 @@ namespace TicketReservation
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label lbIncome;
+        private System.Windows.Forms.CheckBox chFirstClass;
+        private System.Windows.Forms.CheckBox chbInternational;
     }
 }

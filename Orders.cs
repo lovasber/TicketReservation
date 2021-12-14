@@ -16,11 +16,14 @@ namespace TicketReservation
         SQLiteCommand cmd = new SQLiteCommand();
         DataTable dt = new DataTable();
 
+        int isInternational = 0;
+        int clazz = 2;
+
         public Orders()
         {
             InitializeComponent();
-            initDropDownList();
-            initGridView();
+            loadDropDownList();
+            loadDataGridView();
             setSum();
         }
 
@@ -36,13 +39,15 @@ namespace TicketReservation
 
             cmd = new SQLiteCommand("SELECT SUM(Ticket.Price) " +
                 "FROM User, User_Order, Ticket, Path " +
-                "WHERE User.name = User_Order.User_id " +
+                                "WHERE User.name = User_Order.User_id " +
                 "AND Ticket.Id = User_Order.Ticket_id " +
                 "AND Path.Id = Ticket.Path_Id " +
                 "AND Path.Leaving_from like '" + leaving + "' " +
-                "AND Path.Destination like '" + destination + "';",
+                "AND Ticket.Class like '" + this.clazz + "' " +
+                "AND Ticket.Is_International like '" + this.isInternational + "' " +
+                "AND Path.Destination like '" + destination + "' ;",
                 db.GetConnection()
-            );
+            ) ;
             sda = new SQLiteDataAdapter(cmd);
             dt = new DataTable();
             sda.Fill(dt);
@@ -61,12 +66,13 @@ namespace TicketReservation
             db.closeconnection();
         }
 
-        private void initDropDownList()
+        private void loadDropDownList()
         {
+            this.comboBox1.Items.Clear();
             DataTable dt = new DataTable();
 
             db.openconnection();
-            SQLiteCommand cmd = new SQLiteCommand("SELECT Leaving_from, Destination FROM Path", db.GetConnection());
+            SQLiteCommand cmd = new SQLiteCommand("SELECT Leaving_from, Destination FROM Path WHERE Path.Is_International Like '"+this.isInternational+"'", db.GetConnection());
             sda = new SQLiteDataAdapter(cmd);
             sda.Fill(dt);
 
@@ -78,7 +84,7 @@ namespace TicketReservation
             this.comboBox1.SelectedIndex = 0;
         }
 
-        private void initGridView()
+        private void loadDataGridView()
         {
             string path = comboBox1.SelectedItem.ToString();
             string[] spl = path.Split("-");
@@ -86,13 +92,18 @@ namespace TicketReservation
             string destination = spl[1].Trim();
             db.openconnection();
             
-            cmd = new SQLiteCommand("SELECT * " +
+            cmd = new SQLiteCommand("SELECT User.Name as 'User name', Count(*) as 'Bought tickets ', Ticket.Price, Sum(Ticket.Price) as 'Price in total', User_Order.Cupon_Code as 'Cupon code' " + //username, count(jegy), hova, price, isCupon
                 "FROM User, User_Order, Ticket, Path " +
                 "WHERE User.name = User_Order.User_id " +
                 "AND Ticket.Id = User_Order.Ticket_id " +
                 "AND Path.Id = Ticket.Path_Id " +
                 "AND Path.Leaving_from like '" + leaving + "' " +
-                "AND Path.Destination like '" + destination + "';", 
+                "AND Ticket.Class like '" + this.clazz + "' " +
+                "AND Ticket.Is_International like '" + this.isInternational + "' " +
+                "AND Path.Destination like '" + destination + "' " +
+                "GROUP BY User.Name, " + 
+                "Ticket.Price, " +
+                "User_Order.Cupon_Code ;", 
                 db.GetConnection()
             );
             sda = new SQLiteDataAdapter(cmd);
@@ -105,8 +116,27 @@ namespace TicketReservation
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            initGridView();
+            this.dataGridView1.DataSource = null;
+            loadDataGridView();
             setSum();
+        }
+
+        private void chbInternational_CheckedChanged(object sender, EventArgs e)
+        {
+            this.dataGridView1.DataSource = null;
+            this.isInternational = chbInternational.Checked ? 1 : 0;
+            loadDataGridView();
+            setSum();
+            loadDropDownList();
+        }
+
+        private void chFirstClass_CheckedChanged(object sender, EventArgs e)
+        {
+            this.dataGridView1.DataSource = null;
+            this.clazz = chFirstClass.Checked ? 1 : 2;
+            loadDataGridView();
+            setSum();
+            loadDropDownList();
         }
     }
 }
